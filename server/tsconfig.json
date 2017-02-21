@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "outDir": "../dist",
+    "rootDir": "./",
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "es2015"
+    ]
+  }
+}
