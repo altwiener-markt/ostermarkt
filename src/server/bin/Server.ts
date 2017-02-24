@@ -1,14 +1,31 @@
 import * as http from 'http';
+import * as express from 'express';
 import * as debug from 'debug';
 
 debug('ts-express:server');
 
-export class ServerFunctions {
+export class Server {
 
-    private _port: number | string;
+    static PORT_DEFAULT = 3000;
+
+    private _port: number|string|boolean;
     private _server: http.Server;
+    private _app: express.Application;
 
-    public normalizePort(val: number|string): number|string|boolean {
+    public constructor(app: express.Application, port?: number) {
+        this._app = app;
+        this._port = this.normalizePort(port || Server.PORT_DEFAULT);
+        this._app.set('port', this._port);
+    }
+
+    public start(): void {
+        this._server = http.createServer(this._app);
+        this._server.listen(this._port);
+        this._server.on('error', this.onError);
+        this._server.on('listening', this.onListening);
+    }
+
+    private normalizePort(val: number|string): number|string|boolean {
         const port: number = (typeof val === 'string') ? parseInt(val, 10) : val;
 
         if (isNaN(port)) {
@@ -20,7 +37,7 @@ export class ServerFunctions {
         }
     }
 
-    public onError(error: NodeJS.ErrnoException): void {
+    private onError(error: NodeJS.ErrnoException): void {
 
         if (error.syscall != 'listen') {
             throw error;
@@ -42,7 +59,7 @@ export class ServerFunctions {
         }
     }
 
-    public onListening(): void {
+    private onListening(): void {
         const addr = this._server.address();
         let bind = (typeof addr === 'string') ? `pipe ${addr}` : `port ${addr.port}`;
 

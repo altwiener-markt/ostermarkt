@@ -1,2 +1,1 @@
-import 'mojiito-platform-browser';
-import 'mojiito-core';
+console.log('vendor.ts loaded');
